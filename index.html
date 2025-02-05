@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timer Countdown</title>
+    <title>Countdown Timer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +14,6 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-
         .container {
             text-align: center;
             background-color: #fff;
@@ -22,104 +21,54 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .timer {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-top: 20px;
             color: #333;
         }
-
-        button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .error {
-            color: red;
-            font-size: 1.2rem;
-            margin-top: 20px;
-        }
-
         .downloadLink {
             margin-top: 20px;
             font-size: 1.2rem;
         }
-
         .downloadLink a {
             color: #4CAF50;
             text-decoration: none;
             font-weight: bold;
         }
-
         .downloadLink a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <button id="startButton" style="display: none;">Hitni 1'10</button>
-    <div class="timer" id="timerDisplay">42:00:00</div>
-    <div class="error" id="errorMessage"></div>
-    <div class="downloadLink" id="downloadLink" style="display: none;">
-        <p>Timer started! Download your APK file <a href="https://we.tl/t-MA5d9vYuQZ" target="_blank">here</a> (Password: <strong>ctfchallengep</strong>)</p>
+    <div class="timer" id="timerDisplay">Calculating...</div>
+    <div class="downloadLink" id="downloadLink" style="display: visible;">
+        <p>Time reached! Download your APK file <a href="https://we.tl/t-MA5d9vYuQZ" target="_blank">here</a> (Password: <strong>ctfchallengep</strong>)</p>
     </div>
 </div>
-
 <script>
-    let countdown;
-    const startButton = document.getElementById('startButton');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const errorMessage = document.getElementById('errorMessage');
-    const downloadLink = document.getElementById('downloadLink');
+    function updateTimer() {
+        const targetDate = new Date("February 7, 2025 12:00:00").getTime();
+        const now = new Date().getTime();
+        let timeLeft = targetDate - now;
 
-    function startTimer() {
-        let timeLeft = 42 * 60 * 60; // 42 hours in seconds
+        if (timeLeft > 0) {
+            let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        countdown = setInterval(() => {
-            let hours = Math.floor(timeLeft / 3600);
-            let minutes = Math.floor((timeLeft % 3600) / 60);
-            let seconds = timeLeft % 60;
-
-            // Format the timer as HH:MM:SS
-            timerDisplay.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-            }
-
-            timeLeft--;
-        }, 1000);
-
-        // Show the download link after the timer starts
-        downloadLink.style.display = 'block';
+            document.getElementById("timerDisplay").textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            document.getElementById("timerDisplay").textContent = "00d 00h 00m 00s";
+            document.getElementById("downloadLink").style.display = "visible";
+            clearInterval(countdown);
+        }
     }
 
-    function pad(num) {
-        return num < 10 ? `0${num}` : num;
-    }
-
-    // Check the current time and start the timer if it's 6 PM or later
-    const currentTime = new Date();
-    const currentHour = currentTime.getHours();
-
-    if (currentHour >= 18) {
-        startTimer();
-    } else {
-        errorMessage.textContent = 'Come back at 6pm(IST).';
-    }
+    let countdown = setInterval(updateTimer, 1000);
+    updateTimer();
 </script>
-
 </body>
 </html>
